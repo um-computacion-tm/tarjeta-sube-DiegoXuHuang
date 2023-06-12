@@ -3,6 +3,7 @@ import unittest
 from tarjeta_sube import (
     NoHaySaldoException, 
     PRIMARIO,
+    SECUNDARIO,
     PRECIO_TICKET,
     Sube,
     UsuarioDesactivadoException,
@@ -79,11 +80,13 @@ class TestSube(unittest.TestCase):
         )
 
     def test_cambiar_estado_sube_a_activado(self):
-        estado = ACTIVADO
-        self.sube.cambiar_estado(estado)
+        sube = Sube()
+        sube.estado = DESACTIVADO
+        
+        sube.cambiar_estado(ACTIVADO)
 
         self.assertEqual(
-            self.sube.estado,
+            sube.estado,
             ACTIVADO,
         )
 
@@ -92,6 +95,18 @@ class TestSube(unittest.TestCase):
 
         with self.assertRaises(EstadoNoExistenteException):
             self.sube.cambiar_estado(estado)
+    
+    def test_pagar_pasaje_con_grupo_beneficiario_secundario(self):
+        sube = Sube()
+        sube.saldo = 42
+        sube.grupo_beneficiario = SECUNDARIO
+        
+        sube.pagar_pasaje()
+
+        self.assertEqual(
+            sube.saldo,
+            0,
+        )
 
 
 if __name__ == '__main__':
